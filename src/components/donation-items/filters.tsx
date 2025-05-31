@@ -6,10 +6,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { Button } from "../ui/button";
+import { X } from "lucide-react";
 
 export const FilterStatus = () => {
   const [searchParams, setSearchParms] = useSearchParams();
-  const value = searchParams.get("status") ?? "all";
+  const value = searchParams.get("status") ?? "";
 
   return (
     <div className="flex gap-2 items-center text-sm font-medium">
@@ -17,25 +19,24 @@ export const FilterStatus = () => {
       <Select
         value={value}
         onValueChange={(value) => {
-          if (value !== "all") {
-            setSearchParms({ status: value });
-          } else {
-            setSearchParms();
-          }
+          setSearchParms({ status: value });
         }}
       >
         <SelectTrigger>
-          <SelectValue />
+          <SelectValue placeholder="Choose Status" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all" className="opacity-50">
-            Choose Status
-          </SelectItem>
           <SelectItem value="active">Active</SelectItem>
           <SelectItem value="awaitingApproval">Awaiting Approval</SelectItem>
           <SelectItem value="inactive">Inactive</SelectItem>
         </SelectContent>
       </Select>
+      {value && (
+        <Button onClick={() => setSearchParms({})} variant="ghost">
+          <X className="size" />
+          Reset
+        </Button>
+      )}
     </div>
   );
 };
