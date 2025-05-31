@@ -3,12 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLoaderData } from "react-router-dom";
 
 import { Badge } from "@/components/ui/badge";
-import { donationItemsLoader, donationListQuery } from "@/lib/api";
+import { donationListQuery } from "@/lib/api";
 
 export function ShowDonationItems() {
-  const { status } = useLoaderData() as Awaited<
-    ReturnType<ReturnType<typeof donationItemsLoader>>
-  >;
+  const { status } = useLoaderData() as { status?: string };
   const { data: donationItems } = useSuspenseQuery(donationListQuery(status));
 
   if (donationItems.length === 0) {
