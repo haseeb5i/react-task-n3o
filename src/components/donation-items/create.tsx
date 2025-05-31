@@ -4,7 +4,7 @@ import { useForm, type Control } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { LoaderCircle, Plus } from "lucide-react";
+import { AlertCircle, LoaderCircle, Plus } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -38,13 +38,29 @@ import {
   getThemesQuery,
   getLocationsQuery,
 } from "@/lib/api";
+import { useState } from "react";
+import { toast } from "sonner";
+import { Alert, AlertTitle } from "../ui/alert";
 
 type DonationFormValues = z.infer<typeof donationSchema>;
 
-export function DonationItemForm() {
+type DonationItemFormProps = {
+  onSubmitSuccess: () => void;
+};
+
+const defaultValues = {
+  name: "",
+  price: "",
+  location: "",
+  theme: "",
+};
+
+export function DonationItemForm({ onSubmitSuccess }: DonationItemFormProps) {
   const form = useForm<DonationFormValues>({
     resolver: zodResolver(donationSchema),
+    defaultValues,
   });
+  const [errMsg, setErrMsg] = useState("");
 
   const queryClient = useQueryClient();
   const { mutate, isPending } = useMutation({
@@ -53,12 +69,16 @@ export function DonationItemForm() {
       queryClient.invalidateQueries({
         queryKey: ["donations", "list"],
       });
-      form.reset({ name: "", price: "", location: "", theme: "" });
+      form.reset(defaultValues);
+      toast.success("Donation item created successfully");
+      onSubmitSuccess();
+    },
+    onError: (error) => {
+      setErrMsg(error.message);
     },
   });
 
   const onSubmit = (data: DonationFormValues) => {
-    console.log("form data", data);
     mutate(data);
   };
 
@@ -69,6 +89,12 @@ export function DonationItemForm() {
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-4 max-w-md w-full"
       >
+        {errMsg && (
+          <Alert variant="destructive">
+            <AlertCircle />
+            <AlertTitle>{errMsg}</AlertTitle>
+          </Alert>
+        )}
         <FormField
           control={form.control}
           name="name"
@@ -94,7 +120,7 @@ export function DonationItemForm() {
             <FormItem>
               <FormLabel>Price (GBP £)</FormLabel>
               <FormControl>
-                <Input placeholder="e.g. 50" {...field} />
+                <Input placeholder="Enter donation price" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -129,22 +155,20 @@ const SelectLocation = ({
       render={({ field }) => (
         <FormItem>
           <FormLabel>Location</FormLabel>
-          <FormControl>
-            <Select onValueChange={field.onChange} value={field.value}>
-              <FormControl>
-                <SelectTrigger className="w-[250px]" isPending={isPending}>
-                  <SelectValue placeholder="Select a location" />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent>
-                {locations.map((theme) => (
-                  <SelectItem key={theme.id} value={theme.id}>
-                    {theme.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </FormControl>
+          <Select onValueChange={field.onChange} value={field.value}>
+            <FormControl>
+              <SelectTrigger className="w-[250px]" isPending={isPending}>
+                <SelectValue placeholder="Select a location" />
+              </SelectTrigger>
+            </FormControl>
+            <SelectContent>
+              {locations.map((theme) => (
+                <SelectItem key={theme.id} value={theme.id}>
+                  {theme.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <FormMessage />
         </FormItem>
       )}
@@ -163,22 +187,20 @@ const SelectTheme = ({ control }: { control: Control<DonationFormValues> }) => {
       render={({ field }) => (
         <FormItem>
           <FormLabel>Theme</FormLabel>
-          <FormControl>
-            <Select onValueChange={field.onChange} value={field.value}>
-              <FormControl>
-                <SelectTrigger className="w-[250px]" isPending={isPending}>
-                  <SelectValue placeholder="Select a theme" />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent>
-                {themes.map((theme) => (
-                  <SelectItem key={theme.id} value={theme.id}>
-                    {theme.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </FormControl>
+          <Select onValueChange={field.onChange} value={field.value}>
+            <FormControl>
+              <SelectTrigger className="w-[250px]" isPending={isPending}>
+                <SelectValue placeholder="Select a theme" />
+              </SelectTrigger>
+            </FormControl>
+            <SelectContent>
+              {themes.map((theme) => (
+                <SelectItem key={theme.id} value={theme.id}>
+                  {theme.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <FormMessage />
         </FormItem>
       )}
@@ -187,8 +209,10 @@ const SelectTheme = ({ control }: { control: Control<DonationFormValues> }) => {
 };
 
 export const CreateDonationItem = () => {
+  const [open, setOpen] = useState(false);
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>
           <Plus /> Create
@@ -198,7 +222,11 @@ export const CreateDonationItem = () => {
         <DialogHeader>
           <DialogTitle>Creat a new Donation item</DialogTitle>
         </DialogHeader>
-        <DonationItemForm />
+        <DonationItemForm
+          onSubmitSuccess={() => {
+            setOpen(false);
+          }}
+        />
       </DialogContent>
     </Dialog>
   );

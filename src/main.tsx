@@ -7,6 +7,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import "./index.css";
 
 import ErrorPage from "./error-page";
+import { Toaster } from "./components/ui/sonner";
 import { donationItemsLoader } from "./lib/api";
 import Root from "./routes/root";
 
@@ -33,6 +34,7 @@ ReactDOM.createRoot(rootElement!).render(
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={router} />
       <ReactQueryDevtools buttonPosition="bottom-right" />
+      <Toaster />
     </QueryClientProvider>
   </React.StrictMode>,
 );
