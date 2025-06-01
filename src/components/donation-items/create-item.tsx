@@ -173,7 +173,11 @@ const SelectLocation = ({
                 <SelectValue placeholder="Select a location" />
               </SelectTrigger>
             </FormControl>
-            <SelectContent>
+            <SelectContent
+              onCloseAutoFocus={(e) => {
+                e.preventDefault();
+              }}
+            >
               {locations.map((theme) => (
                 <SelectItem key={theme.id} value={theme.id}>
                   {theme.name}
@@ -209,7 +213,11 @@ const SelectTheme = ({ control }: { control: Control<DonationFormValues> }) => {
                 <SelectValue placeholder="Select a theme" />
               </SelectTrigger>
             </FormControl>
-            <SelectContent onPointerDownOutside={(e) => e.stopPropagation()}>
+            <SelectContent
+              onCloseAutoFocus={(e) => {
+                e.preventDefault();
+              }}
+            >
               {themes.map((theme) => (
                 <SelectItem key={theme.id} value={theme.id}>
                   {theme.name}
