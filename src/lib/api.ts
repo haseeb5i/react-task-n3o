@@ -43,7 +43,6 @@ export const donationItemsLoader =
   async ({ request }: LoaderFunctionArgs) => {
     const url = new URL(request.url);
     const status = url.searchParams.get("status") ?? "";
-    // await new Promise((resolve) => setTimeout(resolve, 3000));
     await queryClient.ensureQueryData(donationListQuery(status));
     return { status };
   };

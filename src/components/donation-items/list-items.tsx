@@ -19,7 +19,7 @@ export function ShowDonationItems() {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-5">
       {donationItems.map((item) => (
         <Card
           key={item.id}

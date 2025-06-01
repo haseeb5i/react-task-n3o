@@ -3,7 +3,12 @@
 import { useForm, type Control, type UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
 import { AlertCircle, LoaderCircle, Plus } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
@@ -37,6 +42,7 @@ import {
   createDonationItem,
   getThemesQuery,
   getLocationsQuery,
+  donationListQuery,
 } from "@/lib/api";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -234,8 +240,15 @@ const SelectTheme = ({ control }: { control: Control<DonationFormValues> }) => {
 
 export const CreateDonationItem = () => {
   const [open, setOpen] = useState(false);
+  const { data: donationItems } = useSuspenseQuery(donationListQuery());
   const form = useForm<DonationFormValues>({
-    resolver: zodResolver(donationSchema),
+    resolver: zodResolver(
+      donationSchema.refine(
+        (data) =>
+          !donationItems.find((item) => item.name.trim() === data.name.trim()),
+        { message: "Name must be unique", path: ["name"] },
+      ),
+    ),
     defaultValues,
   });
 

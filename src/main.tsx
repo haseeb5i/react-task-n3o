@@ -10,7 +10,10 @@ import ErrorPage from "./error-page";
 import { Toaster } from "./components/ui/sonner";
 import { donationItemsLoader } from "./lib/api";
 import Root from "./components/donation-items/layout";
-import { DonationItemsSkeleton, ShowDonationItems } from "./components/donation-items/list-items";
+import {
+  DonationItemsSkeleton,
+  ShowDonationItems,
+} from "./components/donation-items/list-items";
 
 const queryClient = new QueryClient({
   defaultOptions: {

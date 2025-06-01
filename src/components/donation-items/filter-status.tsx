@@ -22,7 +22,7 @@ export const FilterStatus = () => {
           setSearchParms({ status: value });
         }}
       >
-        <SelectTrigger>
+        <SelectTrigger size="sm">
           <SelectValue placeholder="Choose Status" />
         </SelectTrigger>
         <SelectContent>
@@ -32,7 +32,7 @@ export const FilterStatus = () => {
         </SelectContent>
       </Select>
       {value && (
-        <Button onClick={() => setSearchParms({})} variant="ghost">
+        <Button size="sm" onClick={() => setSearchParms({})} variant="ghost">
           <X className="size" />
           Reset
         </Button>
