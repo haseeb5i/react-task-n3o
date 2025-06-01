@@ -19,7 +19,7 @@ export function ShowDonationItems() {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-5">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5">
       {donationItems.map((item) => (
         <Card
           key={item.id}
@@ -30,24 +30,30 @@ export function ShowDonationItems() {
             <Badge variant="outline">{item.status.name}</Badge>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
-            <div>
-              <strong>Reference:</strong> {item.reference.text}
-            </div>
-            <div>
-              <strong>Price:</strong> {item.price?.text ?? "N/A"}
-            </div>
-            <div>
-              <strong>Location:</strong> {item.location?.name ?? "N/A"}
-            </div>
-            <div>
-              <strong>Theme:</strong> {item.theme.name}
-            </div>
+            <DataEntry label="Reference" value={item.reference.text} />
+            <DataEntry label="Theme" value={item.theme.name} />
+            <DataEntry label="Location" value={item.location?.name ?? "N/A"} />
+            <DataEntry label="Price" value={item.price?.text ?? "N/A"} />
           </CardContent>
         </Card>
       ))}
     </div>
   );
 }
+
+type DataEntryProps = {
+  label: string;
+  value: string;
+};
+
+const DataEntry = ({ label, value }: DataEntryProps) => {
+  return (
+    <div className="grid grid-cols-2">
+      <span className="text-muted-foreground">{label}</span>
+      <span>{value}</span>
+    </div>
+  );
+};
 
 export const DonationItemsSkeleton = () => {
   return (
