@@ -9,7 +9,7 @@ import {
   useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query";
-import { AlertCircle, LoaderCircle, Plus } from "lucide-react";
+import { AlertCircle, LoaderCircle, Plus, PoundSterling } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -105,7 +105,7 @@ export function DonationItemForm({
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name</FormLabel>
+              <FormLabel>Name*</FormLabel>
               <FormControl>
                 <Input placeholder="Enter donation name" {...field} />
               </FormControl>
@@ -123,14 +123,18 @@ export function DonationItemForm({
           name="price"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Price (GBP £)</FormLabel>
+              <FormLabel>Price</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="Enter price"
-                  type="number"
-                  step="0.01"
-                  {...field}
-                />
+                <div className="relative">
+                  <PoundSterling className="size-4 absolute left-2 top-1/2 -translate-y-1/2" />
+                  <Input
+                    placeholder="Enter price"
+                    className="pl-8"
+                    type="number"
+                    step="0.01"
+                    {...field}
+                  />
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -164,7 +168,7 @@ const SelectLocation = ({
       name="location"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>Location</FormLabel>
+          <FormLabel>Location*</FormLabel>
           <Select
             value={field.value}
             onValueChange={field.onChange}
@@ -208,7 +212,7 @@ const SelectTheme = ({ control }: { control: Control<DonationFormValues> }) => {
       name="theme"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>Theme</FormLabel>
+          <FormLabel>Theme*</FormLabel>
           <Select
             value={field.value}
             onValueChange={field.onChange}
