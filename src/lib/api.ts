@@ -25,12 +25,12 @@ export const donationListQuery = (status?: string) =>
     queryKey: ["donations", "list", status ?? "all"],
     queryFn: async () => {
       try {
-        let url = `${BASE_API_URL}/donationItems/all`;
+        const resp = await fetch(`${BASE_API_URL}/donationItems/all`);
+        const result = (await resp.json()) as DonationItem[];
         if (status) {
-          url = `${url}?status=${status}`;
+          return result.filter((item) => item.status.id === status);
         }
-        const resp = await fetch(url);
-        return (await resp.json()) as DonationItem[];
+        return result;
       } catch (err) {
         console.error("error fetching donation list", err);
         return [];
@@ -42,7 +42,7 @@ export const donationItemsLoader =
   (queryClient: QueryClient) =>
   async ({ request }: LoaderFunctionArgs) => {
     const url = new URL(request.url);
-    const status = url.searchParams.get("status") ?? "";
+    const status = url.searchParams.get("status") ?? "all";
     // await new Promise((resolve) => setTimeout(resolve, 3000));
     await queryClient.ensureQueryData(donationListQuery(status));
     return { status };
