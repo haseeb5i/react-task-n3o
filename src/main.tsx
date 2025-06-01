@@ -9,7 +9,8 @@ import "./index.css";
 import ErrorPage from "./error-page";
 import { Toaster } from "./components/ui/sonner";
 import { donationItemsLoader } from "./lib/api";
-import Root from "./routes/root";
+import Root from "./components/donation-items/layout";
+import { DonationItemsSkeleton, ShowDonationItems } from "./components/donation-items/list-items";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -19,14 +20,28 @@ const queryClient = new QueryClient({
   },
 });
 
-const router = createBrowserRouter([
+const router = createBrowserRouter(
+  [
+    {
+      path: "/",
+      errorElement: <ErrorPage />,
+      element: <Root />,
+      children: [
+        {
+          index: true,
+          loader: donationItemsLoader(queryClient),
+          hydrateFallbackElement: <DonationItemsSkeleton />,
+          element: <ShowDonationItems />,
+        },
+      ],
+    },
+  ],
   {
-    path: "/",
-    errorElement: <ErrorPage />,
-    loader: donationItemsLoader(queryClient),
-    element: <Root />,
+    future: {
+      v7_partialHydration: true,
+    },
   },
-]);
+);
 
 const rootElement = document.getElementById("root");
 ReactDOM.createRoot(rootElement!).render(

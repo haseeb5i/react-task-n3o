@@ -1,6 +1,7 @@
-import { ShowDonationItems } from "@/components/donation-items/list";
-import { CreateDonationItem } from "@/components/donation-items/create";
-import { FilterStatus } from "@/components/donation-items/filters";
+import { Outlet } from "react-router-dom";
+
+import { CreateDonationItem } from "@/components/donation-items/create-item";
+import { FilterStatus } from "@/components/donation-items/filter-status";
 
 export default function Root() {
   return (
@@ -10,7 +11,7 @@ export default function Root() {
         <FilterStatus />
         <CreateDonationItem />
       </div>
-      <ShowDonationItems />
+      <Outlet />
     </main>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm, type Control } from "react-hook-form";
+import { useForm, type Control, type UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -45,6 +45,7 @@ import { Alert, AlertTitle } from "../ui/alert";
 type DonationFormValues = z.infer<typeof donationSchema>;
 
 type DonationItemFormProps = {
+  form: UseFormReturn<DonationFormValues>;
   onSubmitSuccess: () => void;
 };
 
@@ -55,11 +56,10 @@ const defaultValues = {
   theme: "",
 };
 
-export function DonationItemForm({ onSubmitSuccess }: DonationItemFormProps) {
-  const form = useForm<DonationFormValues>({
-    resolver: zodResolver(donationSchema),
-    defaultValues,
-  });
+export function DonationItemForm({
+  form,
+  onSubmitSuccess,
+}: DonationItemFormProps) {
   const [errMsg, setErrMsg] = useState("");
 
   const queryClient = useQueryClient();
@@ -85,7 +85,6 @@ export function DonationItemForm({ onSubmitSuccess }: DonationItemFormProps) {
   return (
     <Form {...form}>
       <form
-        id="donation-form"
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-4 max-w-md w-full"
       >
@@ -120,7 +119,12 @@ export function DonationItemForm({ onSubmitSuccess }: DonationItemFormProps) {
             <FormItem>
               <FormLabel>Price (GBP £)</FormLabel>
               <FormControl>
-                <Input placeholder="Enter donation price" {...field} />
+                <Input
+                  placeholder="Enter price"
+                  type="number"
+                  step="0.01"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -155,9 +159,17 @@ const SelectLocation = ({
       render={({ field }) => (
         <FormItem>
           <FormLabel>Location</FormLabel>
-          <Select onValueChange={field.onChange} value={field.value}>
+          <Select
+            value={field.value}
+            onValueChange={field.onChange}
+            name={field.name}
+          >
             <FormControl>
-              <SelectTrigger className="w-[250px]" isPending={isPending}>
+              <SelectTrigger
+                ref={field.ref}
+                className="w-[250px]"
+                isPending={isPending}
+              >
                 <SelectValue placeholder="Select a location" />
               </SelectTrigger>
             </FormControl>
@@ -187,13 +199,17 @@ const SelectTheme = ({ control }: { control: Control<DonationFormValues> }) => {
       render={({ field }) => (
         <FormItem>
           <FormLabel>Theme</FormLabel>
-          <Select onValueChange={field.onChange} value={field.value}>
+          <Select
+            value={field.value}
+            onValueChange={field.onChange}
+            name={field.name}
+          >
             <FormControl>
               <SelectTrigger className="w-[250px]" isPending={isPending}>
                 <SelectValue placeholder="Select a theme" />
               </SelectTrigger>
             </FormControl>
-            <SelectContent>
+            <SelectContent onPointerDownOutside={(e) => e.stopPropagation()}>
               {themes.map((theme) => (
                 <SelectItem key={theme.id} value={theme.id}>
                   {theme.name}
@@ -210,6 +226,10 @@ const SelectTheme = ({ control }: { control: Control<DonationFormValues> }) => {
 
 export const CreateDonationItem = () => {
   const [open, setOpen] = useState(false);
+  const form = useForm<DonationFormValues>({
+    resolver: zodResolver(donationSchema),
+    defaultValues,
+  });
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -223,6 +243,7 @@ export const CreateDonationItem = () => {
           <DialogTitle>Creat a new Donation item</DialogTitle>
         </DialogHeader>
         <DonationItemForm
+          form={form}
           onSubmitSuccess={() => {
             setOpen(false);
           }}

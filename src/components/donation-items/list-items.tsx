@@ -2,8 +2,9 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLoaderData } from "react-router-dom";
 
-import { Badge } from "@/components/ui/badge";
 import { donationListQuery } from "@/lib/api";
+import { Badge } from "../ui/badge";
+import { Skeleton } from "../ui/skeleton";
 
 export function ShowDonationItems() {
   const { status } = useLoaderData() as { status?: string };
@@ -18,7 +19,7 @@ export function ShowDonationItems() {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
       {donationItems.map((item) => (
         <Card
           key={item.id}
@@ -47,3 +48,27 @@ export function ShowDonationItems() {
     </div>
   );
 }
+
+export const DonationItemsSkeleton = () => {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
+      <CardSkeleton />
+      <CardSkeleton />
+      <CardSkeleton />
+    </div>
+  );
+};
+
+const CardSkeleton = () => (
+  <Card>
+    <CardHeader>
+      <Skeleton className="w-[180px] h-6" />
+    </CardHeader>
+    <CardContent className="space-y-2">
+      <Skeleton className="w-[150px] h-5" />
+      <Skeleton className="w-[150px] h-5" />
+      <Skeleton className="w-[150px] h-5" />
+      <Skeleton className="w-[150px] h-5" />
+    </CardContent>
+  </Card>
+);
